@@ -33,20 +33,40 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Apply database migrations (for development)
+// Apply database migrations automatically on startup
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    
     try
     {
-        // Apply any pending migrations
-        context.Database.Migrate();
+        logger.LogInformation("Checking for pending database migrations...");
+        
+        // Check if database exists and create it if it doesn't
+        await context.Database.EnsureCreatedAsync();
+        
+        // Get pending migrations
+        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+        
+        if (pendingMigrations.Any())
+        {
+            logger.LogInformation("Found {Count} pending migrations. Applying...", pendingMigrations.Count());
+            await context.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully.");
+        }
+        else
+        {
+            logger.LogInformation("Database is up to date. No pending migrations found.");
+        }
     }
     catch (Exception ex)
     {
-        // Log the exception or handle PostgreSQL connection issues
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogWarning(ex, "Could not apply database migrations. Make sure PostgreSQL is running and connection string is correct.");
+        logger.LogError(ex, "An error occurred while applying database migrations. Make sure PostgreSQL is running and connection string is correct.");
+        
+        // In production, you might want to throw the exception to prevent the app from starting
+        // throw;
     }
 }
 
