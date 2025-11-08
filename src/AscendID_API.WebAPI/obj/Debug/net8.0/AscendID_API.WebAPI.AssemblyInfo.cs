@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AscendID_API.WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce64afd561ff18e480acf617523bfaaf9230caf8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b1f3abe7de6ac80ac75b6eb9277bfc7a48156f50")]
 [assembly: System.Reflection.AssemblyProductAttribute("AscendID_API.WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AscendID_API.WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
