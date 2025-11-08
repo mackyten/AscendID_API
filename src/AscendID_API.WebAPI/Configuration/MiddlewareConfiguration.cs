@@ -53,7 +53,8 @@ public static class MiddlewareConfiguration
         // Force HTTPS redirection
         app.UseHttpsRedirection();
 
-        // Add authentication and authorization
+        // Add authentication and authorization middleware
+        app.UseAuthentication();
         app.UseAuthorization();
 
         return app;

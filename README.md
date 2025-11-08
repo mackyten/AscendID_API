@@ -1,6 +1,17 @@
-# AscendID API - PostgreSQL Configuration Guide
+# AscendID API - Identity Provider with Clean Architecture
 
-This guide explains how to set up and run the AscendID API with PostgreSQL.
+A comprehensive ASP.NET Core Identity Provider implementation using OpenIddict OIDC server, built with clean architecture principles.
+
+## Features
+
+- **ASP.NET Core Identity**: Complete user and role management
+- **OpenIddict OIDC Provider**: OAuth 2.0/OpenID Connect server implementation
+- **Clean Architecture**: Domain, Application, Infrastructure, and WebAPI layers
+- **Entity Framework Core**: PostgreSQL with automatic migrations
+- **Multi-Environment Support**: Local, Development, and Production configurations
+- **RESTful API**: Complete account management endpoints
+- **Swagger Documentation**: Interactive API documentation
+- **Database Seeding**: Automatic role and admin user creation
 
 ## Prerequisites
 
@@ -11,28 +22,29 @@ This guide explains how to set up and run the AscendID API with PostgreSQL.
 
 2. **.NET 8 SDK**: Make sure you have .NET 8 SDK installed
 
-## Database Configuration
+## Quick Start
 
-### Connection Strings
+### Environment Configuration
 
-The application uses different connection strings for different environments:
+This project supports multiple environments with different database configurations. See [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md) for detailed environment configuration and migration commands.
 
-**Production** (`appsettings.json`):
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=AscendID_DB;Username=postgres;Password=postgres"
-  }
-}
-```
+**Quick Environment Overview**:
+- **Local** → `appsettings.Local.json` → Local PostgreSQL database  
+- **Development** → `appsettings.Development.json` → Supabase database
+- **Production** → `appsettings.json` → Production database
 
-**Development** (`appsettings.Development.json`):
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=AscendID_Dev_DB;Username=postgres;Password=postgres;Port=5432"
-  }
-}
+### Running with Different Environments
+
+```bash
+# Local development with local PostgreSQL
+dotnet run --project src/AscendID_API.WebAPI --launch-profile Local
+
+# Development with Supabase
+dotnet run --project src/AscendID_API.WebAPI --launch-profile Development
+
+# Using migration helper script
+./migrate.sh update Local      # Update local database
+./migrate.sh info Development  # Check development database info
 ```
 
 ### Setting up PostgreSQL

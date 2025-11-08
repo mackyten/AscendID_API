@@ -13,6 +13,9 @@ public static class ServiceConfiguration
     /// <returns>The configured service collection</returns>
     public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
+        // Add configuration options
+        services.Configure<AdminUserOptions>(configuration.GetSection(AdminUserOptions.SectionName));
+        
         // Add controllers
         services.AddControllers();
 

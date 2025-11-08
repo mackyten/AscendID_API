@@ -1,6 +1,10 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=YourDatabaseName;Username=your_username;Password=your_password;Port=5432"
+    "DefaultConnection": "User Id=postgres;Password=YOUR_PASSWORD;Server=localhost;Port=5433;Database=ascendid_api"
+  },
+  "AdminUser": {
+    "Email": "admin@yourdomain.com",
+    "Password": "YourSecureAdminPassword123!"
   },
   "Logging": {
     "LogLevel": {

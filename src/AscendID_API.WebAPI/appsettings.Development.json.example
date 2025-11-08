@@ -1,6 +1,10 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=YourDevDatabaseName;Username=your_username;Password=your_password;Port=5432"
+    "DefaultConnection": "User Id=postgres;Password=YOUR_DEV_PASSWORD;Server=your-dev-server;Port=5432;Database=your_dev_database"
+  },
+  "AdminUser": {
+    "Email": "admin@yourdomain.dev",
+    "Password": "YourSecureDevAdminPassword123!"
   },
   "Logging": {
     "LogLevel": {
