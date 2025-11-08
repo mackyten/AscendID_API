@@ -1,0 +1,28 @@
+### Create TempTestRecord
+POST {{baseUrl}}/api/TempTestRecords
+Content-Type: application/json
+
+{
+  "name": "Test Record 1",
+  "description": "This is a test record for demonstration"
+}
+
+### Get all TempTestRecords
+GET {{baseUrl}}/api/TempTestRecords
+
+### Get TempTestRecord by ID
+GET {{baseUrl}}/api/TempTestRecords/1
+
+### Update TempTestRecord
+PUT {{baseUrl}}/api/TempTestRecords/1
+Content-Type: application/json
+
+{
+  "name": "Updated Test Record 1",
+  "description": "This record has been updated"
+}
+
+### Delete TempTestRecord (Soft Delete)
+DELETE {{baseUrl}}/api/TempTestRecords/1
+
+@baseUrl = https://localhost:7000

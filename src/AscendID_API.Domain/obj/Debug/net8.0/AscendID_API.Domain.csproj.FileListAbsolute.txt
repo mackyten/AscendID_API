@@ -1,0 +1,11 @@
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/bin/Debug/net8.0/AscendID_API.Domain.deps.json
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/bin/Debug/net8.0/AscendID_API.Domain.dll
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/bin/Debug/net8.0/AscendID_API.Domain.pdb
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/obj/Debug/net8.0/AscendID_API.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/obj/Debug/net8.0/AscendID_API.Domain.AssemblyInfoInputs.cache
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/obj/Debug/net8.0/AscendID_API.Domain.AssemblyInfo.cs
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/obj/Debug/net8.0/AscendID_API.Domain.csproj.CoreCompileInputs.cache
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/obj/Debug/net8.0/AscendID_API.Domain.dll
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/obj/Debug/net8.0/refint/AscendID_API.Domain.dll
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/obj/Debug/net8.0/AscendID_API.Domain.pdb
+/Users/angelo/AscendID_API/src/AscendID_API.Domain/obj/Debug/net8.0/ref/AscendID_API.Domain.dll

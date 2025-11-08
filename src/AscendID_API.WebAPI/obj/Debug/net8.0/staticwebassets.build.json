@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "myp3bvSlGAlKRHwIdBSoSpLcSciUpVXcIN+5gXWFTXk=",
+  "Source": "AscendID_API.WebAPI",
+  "BasePath": "_content/AscendID_API.WebAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
