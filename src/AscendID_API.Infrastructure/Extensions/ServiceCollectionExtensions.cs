@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
     {
         // Add DbContext
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         // Add Repositories
         services.AddScoped<ITempTestRecordRepository, TempTestRecordRepository>();

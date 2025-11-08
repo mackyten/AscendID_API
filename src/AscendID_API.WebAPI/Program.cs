@@ -37,7 +37,17 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
+    try
+    {
+        // For PostgreSQL, use EnsureCreated() or Migrations in production
+        context.Database.EnsureCreated();
+    }
+    catch (Exception ex)
+    {
+        // Log the exception or handle PostgreSQL connection issues
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning(ex, "Could not create database. Make sure PostgreSQL is running and connection string is correct.");
+    }
 }
 
 app.Run();

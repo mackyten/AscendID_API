@@ -8,6 +8,7 @@
 /Users/angelo/AscendID_API/src/AscendID_API.Application/obj/Debug/net8.0/AscendID_API.Application.AssemblyInfoInputs.cache
 /Users/angelo/AscendID_API/src/AscendID_API.Application/obj/Debug/net8.0/AscendID_API.Application.AssemblyInfo.cs
 /Users/angelo/AscendID_API/src/AscendID_API.Application/obj/Debug/net8.0/AscendID_API.Application.csproj.CoreCompileInputs.cache
+/Users/angelo/AscendID_API/src/AscendID_API.Application/obj/Debug/net8.0/AscendID_API.Application.sourcelink.json
 /Users/angelo/AscendID_API/src/AscendID_API.Application/obj/Debug/net8.0/AscendID.A788C76B.Up2Date
 /Users/angelo/AscendID_API/src/AscendID_API.Application/obj/Debug/net8.0/AscendID_API.Application.dll
 /Users/angelo/AscendID_API/src/AscendID_API.Application/obj/Debug/net8.0/refint/AscendID_API.Application.dll

@@ -11,6 +11,7 @@
 /Users/angelo/AscendID_API/src/AscendID_API.Infrastructure/obj/Debug/net8.0/AscendID_API.Infrastructure.AssemblyInfoInputs.cache
 /Users/angelo/AscendID_API/src/AscendID_API.Infrastructure/obj/Debug/net8.0/AscendID_API.Infrastructure.AssemblyInfo.cs
 /Users/angelo/AscendID_API/src/AscendID_API.Infrastructure/obj/Debug/net8.0/AscendID_API.Infrastructure.csproj.CoreCompileInputs.cache
+/Users/angelo/AscendID_API/src/AscendID_API.Infrastructure/obj/Debug/net8.0/AscendID_API.Infrastructure.sourcelink.json
 /Users/angelo/AscendID_API/src/AscendID_API.Infrastructure/obj/Debug/net8.0/AscendID.387B1E1F.Up2Date
 /Users/angelo/AscendID_API/src/AscendID_API.Infrastructure/obj/Debug/net8.0/AscendID_API.Infrastructure.dll
 /Users/angelo/AscendID_API/src/AscendID_API.Infrastructure/obj/Debug/net8.0/refint/AscendID_API.Infrastructure.dll
