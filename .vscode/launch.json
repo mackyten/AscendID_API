@@ -1,0 +1,61 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Local",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/AscendID_API.WebAPI/bin/Debug/net8.0/AscendID_API.WebAPI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/AscendID_API.WebAPI",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(http://localhost:[0-9]+)",
+                "uriFormat": "%s/swagger"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Local",
+                "ASPNETCORE_URLS": "http://localhost:5120"
+            }
+        },
+        {
+            "name": "Development",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/AscendID_API.WebAPI/bin/Debug/net8.0/AscendID_API.WebAPI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/AscendID_API.WebAPI",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(http://localhost:[0-9]+)",
+                "uriFormat": "%s/swagger"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Production",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/AscendID_API.WebAPI/bin/Debug/net8.0/AscendID_API.WebAPI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/AscendID_API.WebAPI",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Production"
+            }
+        }
+    ]
+}

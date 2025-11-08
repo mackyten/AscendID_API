@@ -1,0 +1,52 @@
+using AscendID_API.Application.Handlers;
+using AscendID_API.Infrastructure.Extensions;
+
+namespace AscendID_API.WebAPI.Configuration;
+
+public static class ServiceConfiguration
+{
+    /// <summary>
+    /// Configures all application services including controllers, MediatR, infrastructure, and API documentation
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <param name="configuration">Application configuration</param>
+    /// <returns>The configured service collection</returns>
+    public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        // Add controllers
+        services.AddControllers();
+
+        // Add MediatR for CQRS pattern
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTempTestRecordHandler).Assembly));
+
+        // Add Infrastructure services (Entity Framework, repositories, etc.)
+        services.AddInfrastructure(configuration);
+
+        // Add API documentation services
+        services.ConfigureApiDocumentation();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Configures OpenAPI/Swagger documentation services
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <returns>The configured service collection</returns>
+    private static IServiceCollection ConfigureApiDocumentation(this IServiceCollection services)
+    {
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+            {
+                Title = "AscendID API",
+                Version = "v1",
+                Description = "A clean architecture API for AscendID application"
+            });
+        });
+
+        return services;
+    }
+}
