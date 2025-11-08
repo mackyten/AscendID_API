@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AscendID_API.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c99ad6e36fb3b6829d19c9a677d4f4ba804129de")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce64afd561ff18e480acf617523bfaaf9230caf8")]
 [assembly: System.Reflection.AssemblyProductAttribute("AscendID_API.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AscendID_API.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

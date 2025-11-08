@@ -33,20 +33,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Ensure database is created (for development)
+// Apply database migrations (for development)
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     try
     {
-        // For PostgreSQL, use EnsureCreated() or Migrations in production
-        context.Database.EnsureCreated();
+        // Apply any pending migrations
+        context.Database.Migrate();
     }
     catch (Exception ex)
     {
         // Log the exception or handle PostgreSQL connection issues
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogWarning(ex, "Could not create database. Make sure PostgreSQL is running and connection string is correct.");
+        logger.LogWarning(ex, "Could not apply database migrations. Make sure PostgreSQL is running and connection string is correct.");
     }
 }
 
