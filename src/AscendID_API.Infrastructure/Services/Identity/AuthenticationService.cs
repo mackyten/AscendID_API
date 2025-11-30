@@ -15,17 +15,20 @@ public class AuthenticationService : IAuthenticationService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserService _userService;
+    private readonly IJwtTokenService _jwtTokenService;
 
     public AuthenticationService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IHttpContextAccessor httpContextAccessor,
-        IUserService userService)
+        IUserService userService,
+        IJwtTokenService jwtTokenService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _httpContextAccessor = httpContextAccessor;
         _userService = userService;
+        _jwtTokenService = jwtTokenService;
     }
 
     public async Task<AuthenticationResult> SignInAsync(string email, string password, bool rememberMe = false, CancellationToken cancellationToken = default)
@@ -47,14 +50,38 @@ public class AuthenticationService : IAuthenticationService
             // Update last login timestamp
             await _userService.UpdateLastLoginAsync(user.Id, cancellationToken);
 
-            return new AuthenticationResult
+            // Generate JWT tokens
+            try
             {
-                Success = true,
-                // Note: In a real OIDC implementation, you would generate actual JWT tokens here
-                // For now, this relies on cookie authentication
-                AccessToken = "cookie-based", // Placeholder
-                ExpiresAt = DateTime.UtcNow.AddHours(1) // Placeholder
-            };
+                var userRoles = await _userManager.GetRolesAsync(user);
+                var userClaims = await _userManager.GetClaimsAsync(user);
+                var scopes = userClaims.Select(c => c.Value).ToList();
+                
+                var tokens = await _jwtTokenService.GenerateTokensAsync(
+                    userId: user.Id,
+                    userName: user.UserName ?? user.Email ?? "",
+                    email: user.Email ?? "",
+                    roles: userRoles,
+                    scopes: scopes,
+                    cancellationToken: cancellationToken);
+                
+                return new AuthenticationResult
+                {
+                    Success = true,
+                    AccessToken = tokens.AccessToken,
+                    RefreshToken = tokens.RefreshToken,
+                    ExpiresAt = tokens.ExpiresAt
+                };
+            }
+            catch (Exception)
+            {
+                // In a real application, log this exception
+                return new AuthenticationResult
+                {
+                    Success = false,
+                    ErrorMessage = "An error occurred during token generation"
+                };
+            }
         }
 
         var authResult = new AuthenticationResult { Success = false };
@@ -89,10 +116,15 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<TokenResult?> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
     {
-        // TODO: Implement refresh token logic with OpenIddict
-        // This is a placeholder implementation
-        await Task.CompletedTask;
-        return null;
+        try
+        {
+            return await _jwtTokenService.RefreshTokensAsync(refreshToken, cancellationToken);
+        }
+        catch (Exception)
+        {
+            // In a real application, log this exception
+            return null;
+        }
     }
 
     public async Task<bool> RevokeTokenAsync(string refreshToken, CancellationToken cancellationToken = default)

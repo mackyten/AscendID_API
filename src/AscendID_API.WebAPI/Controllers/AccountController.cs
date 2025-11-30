@@ -45,7 +45,9 @@ public class AccountController : ControllerBase
             {
                 message = "Login successful",
                 accessToken = result.AccessToken,
-                expiresAt = result.ExpiresAt
+                refreshToken = result.RefreshToken,
+                expiresAt = result.ExpiresAt,
+                tokenType = "Bearer"
             });
         }
 
@@ -58,7 +60,7 @@ public class AccountController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Logout result</returns>
     [HttpPost("logout")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "JWT")]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         await _authenticationService.SignOutAsync(cancellationToken);
@@ -102,7 +104,7 @@ public class AccountController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>User profile</returns>
     [HttpGet("profile")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "JWT")]
     public async Task<IActionResult> GetProfile(CancellationToken cancellationToken)
     {
         var userId = _authenticationService.GetCurrentUserId();
@@ -133,7 +135,7 @@ public class AccountController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Update result</returns>
     [HttpPut("profile")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "JWT")]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -167,7 +169,7 @@ public class AccountController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Change password result</returns>
     [HttpPost("change-password")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "JWT")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -189,6 +191,42 @@ public class AccountController : ControllerBase
         }
 
         return BadRequest(new { errors });
+    }
+
+    /// <summary>
+    /// Refresh access token using refresh token
+    /// </summary>
+    /// <param name="request">Token refresh request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>New token pair</returns>
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var tokens = await _authenticationService.RefreshTokenAsync(request.RefreshToken, cancellationToken);
+            
+            if (tokens?.AccessToken != null)
+            {
+                return Ok(new
+                {
+                    message = "Token refreshed successfully",
+                    accessToken = tokens.AccessToken,
+                    refreshToken = tokens.RefreshToken,
+                    expiresAt = tokens.ExpiresAt,
+                    tokenType = "Bearer"
+                });
+            }
+
+            return Unauthorized(new { message = "Invalid or expired refresh token" });
+        }
+        catch (Exception)
+        {
+            return BadRequest(new { message = "Token refresh failed" });
+        }
     }
 }
 
@@ -229,4 +267,12 @@ public class ChangePasswordRequest
 {
     public string CurrentPassword { get; set; } = string.Empty;
     public string NewPassword { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Token refresh request model
+/// </summary>
+public class RefreshTokenRequest
+{
+    public string RefreshToken { get; set; } = string.Empty;
 }

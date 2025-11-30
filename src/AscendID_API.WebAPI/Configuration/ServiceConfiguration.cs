@@ -16,8 +16,8 @@ public static class ServiceConfiguration
         // Add configuration options
         services.Configure<AdminUserOptions>(configuration.GetSection(AdminUserOptions.SectionName));
         
-        // Add controllers
-        services.AddControllers();
+        // Add controllers with views support for MVC
+        services.AddControllersWithViews();
 
         // Add MediatR for CQRS pattern
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTempTestRecordHandler).Assembly));
@@ -47,6 +47,20 @@ public static class ServiceConfiguration
                 Title = "AscendID API",
                 Version = "v1",
                 Description = "A clean architecture API for AscendID application"
+            });
+
+            // Only include API controllers, exclude MVC controllers
+            options.DocInclusionPredicate((name, apiDesc) =>
+            {
+                // Exclude AuthController (MVC controller)
+                if (apiDesc.ActionDescriptor.RouteValues.ContainsKey("controller") &&
+                    apiDesc.ActionDescriptor.RouteValues["controller"] == "Auth")
+                {
+                    return false;
+                }
+                
+                // Include only API controllers (those with [ApiController] attribute or in /api/ routes)
+                return apiDesc.RelativePath?.StartsWith("api/") == true;
             });
         });
 

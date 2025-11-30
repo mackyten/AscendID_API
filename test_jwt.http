@@ -1,0 +1,27 @@
+### Test JWT Authentication Flow
+
+# Step 1: Login to get JWT tokens
+POST http://localhost:5122/api/Account/login
+Content-Type: application/json
+
+{
+  "email": "admin@ascendid.local",
+  "password": "AdminPassword123!"
+}
+
+### Step 2: Test protected endpoint with JWT token
+# Copy the accessToken from the login response and replace {token} below
+GET http://localhost:5122/api/Account/profile
+Authorization: Bearer {token}
+
+### Step 3: Test token refresh
+# Copy the refreshToken from the login response and replace {refresh_token} below
+POST http://localhost:5122/api/Account/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "{refresh_token}"
+}
+
+### Step 4: Test without authorization (should fail)
+GET http://localhost:5122/api/Account/profile

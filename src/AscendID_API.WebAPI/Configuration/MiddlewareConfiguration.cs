@@ -69,6 +69,11 @@ public static class MiddlewareConfiguration
     {
         // Map controller routes
         app.MapControllers();
+        
+        // Add default MVC route for controllers with views
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
 
         return app;
     }

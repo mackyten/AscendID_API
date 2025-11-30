@@ -6,6 +6,13 @@
     "Email": "admin@yourdomain.dev",
     "Password": "YourSecureDevAdminPassword123!"
   },
+  "Jwt": {
+    "Key": "YOUR_DEV_JWT_SECRET_KEY_MUST_BE_AT_LEAST_32_CHARACTERS_LONG_FOR_SECURITY",
+    "Issuer": "AscendID_API_Dev",
+    "Audience": "AscendID_API_Dev_Users",
+    "AccessTokenExpirationMinutes": 60,
+    "RefreshTokenExpirationDays": 30
+  },
   "Logging": {
     "LogLevel": {
       "Default": "Information",

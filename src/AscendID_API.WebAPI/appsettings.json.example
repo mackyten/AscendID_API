@@ -6,6 +6,13 @@
     "Email": "admin@yourdomain.com",
     "Password": "YourSecureAdminPassword123!"
   },
+  "Jwt": {
+    "Key": "YOUR_JWT_SECRET_KEY_MUST_BE_AT_LEAST_32_CHARACTERS_LONG_FOR_SECURITY",
+    "Issuer": "AscendID_API",
+    "Audience": "AscendID_API_Users",
+    "AccessTokenExpirationMinutes": 15,
+    "RefreshTokenExpirationDays": 7
+  },
   "Logging": {
     "LogLevel": {
       "Default": "Information",

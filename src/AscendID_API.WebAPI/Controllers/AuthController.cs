@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AscendID_API.Application.Interfaces.Identity;
+using AscendID_API.WebAPI.ViewModels;
 
 namespace AscendID_API.WebAPI.Controllers;
 
 /// <summary>
 /// MVC Controller for authentication views (login, logout pages)
 /// </summary>
+[Route("Auth")]
 public class AuthController : Controller
 {
     private readonly IUserService _userService;
@@ -84,14 +86,4 @@ public class AuthController : Controller
     {
         return View();
     }
-}
-
-/// <summary>
-/// Login view model
-/// </summary>
-public class LoginViewModel
-{
-    public string Email { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public bool RememberMe { get; set; }
 }

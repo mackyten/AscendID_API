@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using AscendID_API.Application.Interfaces;
 using AscendID_API.Application.Interfaces.Identity;
 using AscendID_API.Domain.Entities.Identity;
@@ -89,6 +92,59 @@ public static class ServiceCollectionExtensions
                 options.UseAspNetCore();
             });
 
+        // Configure JWT Bearer Authentication for API endpoints
+        services.AddAuthentication(options =>
+            {
+                // Set Identity.Application as the default scheme for MVC controllers
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+            })
+            .AddJwtBearer("JWT", options =>
+            {
+                var jwtKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured");
+                var key = Encoding.UTF8.GetBytes(jwtKey);
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidAudience = configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ClockSkew = TimeSpan.Zero // Remove default 5-minute clock skew
+                };
+
+                // Configure JWT Bearer events for better debugging
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers["Token-Expired"] = "true";
+                        }
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = async context =>
+                    {
+                        context.HandleResponse();
+                        context.Response.StatusCode = 401;
+                        context.Response.ContentType = "application/json";
+                        var result = System.Text.Json.JsonSerializer.Serialize(new { error = "You are not authorized" });
+                        await context.Response.Body.WriteAsync(System.Text.Encoding.UTF8.GetBytes(result));
+                    },
+                    OnForbidden = async context =>
+                    {
+                        context.Response.StatusCode = 403;
+                        context.Response.ContentType = "application/json";
+                        var result = System.Text.Json.JsonSerializer.Serialize(new { error = "You are forbidden to access this resource" });
+                        await context.Response.Body.WriteAsync(System.Text.Encoding.UTF8.GetBytes(result));
+                    }
+                };
+            });
+
         // Add application services
         services.AddHttpContextAccessor();
 
@@ -99,6 +155,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IOAuthClientService, OAuthClientService>();
 
         // Add OpenIddict configuration service
