@@ -3,11 +3,13 @@ using MediatR;
 using AscendID_API.Application.Commands;
 using AscendID_API.Application.Queries;
 using AscendID_API.Application.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AscendID_API.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(AuthenticationSchemes = "JWT")]
 public class TempTestRecordsController : ControllerBase
 {
     private readonly IMediator _mediator;

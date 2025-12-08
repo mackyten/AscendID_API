@@ -25,7 +25,7 @@ public class AuthController : Controller
     /// </summary>
     /// <param name="returnUrl">URL to redirect to after login</param>
     /// <returns>Login view</returns>
-    [HttpGet]
+    [HttpGet("Login")]
     public IActionResult Login(string? returnUrl = null)
     {
         if (_authService.IsAuthenticated())
@@ -43,7 +43,7 @@ public class AuthController : Controller
     /// <param name="model">Login model</param>
     /// <param name="returnUrl">URL to redirect to after login</param>
     /// <returns>Redirect to return URL or login page with errors</returns>
-    [HttpPost]
+    [HttpPost("Login")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {

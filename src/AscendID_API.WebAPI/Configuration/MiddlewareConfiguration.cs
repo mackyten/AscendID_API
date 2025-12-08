@@ -50,8 +50,11 @@ public static class MiddlewareConfiguration
     /// <returns>The configured web application</returns>
     private static WebApplication ConfigureSecurityMiddleware(this WebApplication app)
     {
-        // Force HTTPS redirection
-        app.UseHttpsRedirection();
+        // Only force HTTPS redirection in production environments
+        if (!app.Environment.IsDevelopment() && app.Environment.EnvironmentName != "Local")
+        {
+            app.UseHttpsRedirection();
+        }
 
         // Add authentication and authorization middleware
         app.UseAuthentication();
