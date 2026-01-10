@@ -1,0 +1,36 @@
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>AscendID API - Blazor UI</h1>
+
+<p>Welcome to the AscendID API Blazor UI demonstration.</p>
+
+<div class="alert alert-info">
+    <h4>About This Application</h4>
+    <p>
+        This Blazor Server application demonstrates two approaches to consuming your API:
+    </p>
+    <ul>
+        <li><strong>Blazor Server Mode:</strong> Direct access to Application layer via MediatR</li>
+        <li><strong>API Mode:</strong> HTTP calls to the WebAPI endpoints</li>
+    </ul>
+    <p>
+        The application also demonstrates sharing FluentValidation validators between
+        the API and UI for consistent validation rules.
+    </p>
+</div>
+
+<h3>Features</h3>
+<ul>
+    <li>View all Temp Test Records</li>
+    <li>Create new records with validation</li>
+    <li>Update existing records</li>
+    <li>Delete records</li>
+    <li>Shared FluentValidation between API and UI</li>
+</ul>
+
+<div class="mt-4">
+    <a href="/temp-test-records" class="btn btn-primary">View Records</a>
+    <a href="/create-record" class="btn btn-success ms-2">Create New Record</a>
+</div>
