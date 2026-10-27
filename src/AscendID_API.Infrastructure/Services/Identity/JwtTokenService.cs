@@ -322,7 +322,9 @@ public class JwtTokenService : IJwtTokenService
     {
         return new JwtSettings
         {
-            SecretKey = _configuration["Jwt:SecretKey"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong!",
+            // "Jwt:Key" is what the JWT bearer validation reads; "Jwt:SecretKey" is the legacy name.
+            SecretKey = _configuration["Jwt:Key"] ?? _configuration["Jwt:SecretKey"]
+                ?? throw new InvalidOperationException("JWT signing key is not configured (Jwt:Key)."),
             Issuer = _configuration["Jwt:Issuer"] ?? "AscendID_API",
             Audience = _configuration["Jwt:Audience"] ?? "AscendID_API_Clients",
             AccessTokenLifetime = TimeSpan.FromHours(1),

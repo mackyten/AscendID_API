@@ -150,3 +150,44 @@ public class JwtTokenServiceTests
         Assert.Null(service.GetPrincipalFromToken("garbage"));
     }
 }
+
+public class JwtSigningKeyConfigurationTests
+{
+    private static JwtTokenService CreateService(Dictionary<string, string?> settings)
+    {
+        var config = new ConfigurationBuilder().AddInMemoryCollection(settings).Build();
+        var userManager = new Mock<UserManager<ApplicationUser>>(
+            Mock.Of<IUserStore<ApplicationUser>>(), null!, null!, null!, null!, null!, null!, null!, null!);
+
+        return new JwtTokenService(userManager.Object, config, NullLogger<JwtTokenService>.Instance);
+    }
+
+    private static Task<TokenResult> Issue(JwtTokenService service) =>
+        service.GenerateTokensAsync(Guid.NewGuid(), "gelo", "gelo@example.com", Array.Empty<string>(), Array.Empty<string>());
+
+    [Fact]
+    public async Task GenerateTokens_Throws_WhenNoSigningKeyIsConfigured()
+    {
+        var service = CreateService(new Dictionary<string, string?>());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => Issue(service));
+    }
+
+    [Fact]
+    public async Task GenerateTokens_UsesJwtKey_TheSettingTheBearerSchemeValidatesWith()
+    {
+        var settings = new Dictionary<string, string?>
+        {
+            ["Jwt:Key"] = "bearer-scheme-key-that-is-at-least-32-chars!",
+            ["Jwt:Issuer"] = "tests",
+            ["Jwt:Audience"] = "tests-clients",
+        };
+        var issuer = CreateService(settings);
+
+        var tokens = await Issue(issuer);
+
+        // A second service configured with the same Jwt:Key accepts the token.
+        var result = await CreateService(settings).ValidateAccessTokenAsync(tokens.AccessToken);
+        Assert.True(result.IsValid);
+    }
+}
