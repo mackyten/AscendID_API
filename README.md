@@ -1,5 +1,7 @@
 # AscendID API - Identity Provider with Clean Architecture
 
+[![CI](https://github.com/mackyten/AscendID_API/actions/workflows/ci.yml/badge.svg)](https://github.com/mackyten/AscendID_API/actions/workflows/ci.yml)
+
 A comprehensive ASP.NET Core Identity Provider implementation using OpenIddict OIDC server, built with clean architecture principles.
 
 ## Features
