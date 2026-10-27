@@ -178,3 +178,10 @@ dotnet ef migrations add InitialCreate --project src/AscendID_API.Infrastructure
 # Update database
 dotnet ef database update --project src/AscendID_API.Infrastructure --startup-project src/AscendID_API.WebAPI
 ```
+## Tests
+
+```bash
+dotnet test AscendID_API.sln
+```
+
+The suite (xUnit + Moq) covers the record entity, FluentValidation rules, MediatR handlers (against an in-memory repository) and `JwtTokenService`: issuing, validating, revoking and refreshing tokens, including a wrong signing key and an inactive user.
