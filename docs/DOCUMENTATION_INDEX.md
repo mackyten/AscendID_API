@@ -89,7 +89,7 @@
 
 ### Project README
 
-#### [README.md](README.md)
+#### [README.md](../README.md)
 - Original project overview
 - General information
 
@@ -124,7 +124,7 @@
 → Follow [JWT_SWAGGER_GUIDE.md](JWT_SWAGGER_GUIDE.md)
 
 #### Get a quick overview
-→ Look at [README.md](README.md)
+→ Look at [README.md](../README.md)
 
 ---
 

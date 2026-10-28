@@ -1,187 +1,131 @@
-# AscendID API - Identity Provider with Clean Architecture
+# AscendID API
 
 [![CI](https://github.com/mackyten/AscendID_API/actions/workflows/ci.yml/badge.svg)](https://github.com/mackyten/AscendID_API/actions/workflows/ci.yml)
 
-A comprehensive ASP.NET Core Identity Provider implementation using OpenIddict OIDC server, built with clean architecture principles.
+An identity provider built on ASP.NET Core Identity and [OpenIddict](https://documentation.openiddict.com/). It issues tokens through the OAuth 2.0 / OpenID Connect **authorization code flow with PKCE**, and also exposes a JSON API for registration, login, profile and token refresh. Clean Architecture, PostgreSQL, .NET 10.
 
 ## Features
 
-- **ASP.NET Core Identity**: Complete user and role management
-- **OpenIddict OIDC Provider**: OAuth 2.0/OpenID Connect server implementation
-- **Clean Architecture**: Domain, Application, Infrastructure, and WebAPI layers
-- **Entity Framework Core**: PostgreSQL with automatic migrations
-- **Multi-Environment Support**: Local, Development, and Production configurations
-- **RESTful API**: Complete account management endpoints
-- **Swagger Documentation**: Interactive API documentation
-- **Database Seeding**: Automatic role and admin user creation
+- **OpenID Connect server**: authorize, token, userinfo and logout endpoints; authorization code and refresh token flows; scopes `openid`, `email`, `profile`, `roles`, `api`
+- **Account API**: register, login, logout, profile read/update, change password, refresh token
+- **JWT bearer authentication** for the account API (access + refresh tokens)
+- **Role-based access** with ASP.NET Core Identity, plus a seeded admin user
+- **Seeded OIDC clients**: `ascend-client` (confidential) and `ascend-spa` (public, PKCE required)
+- **Clean Architecture**: Domain, Application (MediatR), Infrastructure (EF Core + Npgsql), WebAPI, plus a shared FluentValidation project and a Blazor UI
+- **Swagger UI** in Development, automatic migrations and seeding on startup
+- 30 xUnit tests, run in CI
 
-## Prerequisites
-
-1. **PostgreSQL Database**: Install PostgreSQL on your system
-   - macOS: `brew install postgresql`
-   - Ubuntu: `sudo apt install postgresql postgresql-contrib`
-   - Windows: Download from [PostgreSQL official site](https://www.postgresql.org/download/)
-
-2. **.NET 8 SDK**: Make sure you have .NET 8 SDK installed
-
-## Quick Start
-
-### Environment Configuration
-
-This project supports multiple environments with different database configurations. See [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md) for detailed environment configuration and migration commands.
-
-**Quick Environment Overview**:
-- **Local** → `appsettings.Local.json` → Local PostgreSQL database  
-- **Development** → `appsettings.Development.json` → Supabase database
-- **Production** → `appsettings.json` → Production database
-
-### Running with Different Environments
+## Quick start with Docker
 
 ```bash
-# Local development with local PostgreSQL
+cp .env.example .env        # then edit every value
+docker compose up --build
+```
+
+The API listens on <http://localhost:8080> and Swagger is at <http://localhost:8080/swagger>. PostgreSQL runs in a container with a named volume. Migrations and the admin user are applied on first start.
+
+## Run without Docker
+
+You need the .NET 10 SDK and a PostgreSQL database.
+
+```bash
+cp src/AscendID_API.WebAPI/appsettings.json.example src/AscendID_API.WebAPI/appsettings.json
+# edit the connection string, AdminUser and Jwt:Key (32+ characters)
 dotnet run --project src/AscendID_API.WebAPI --launch-profile Local
-
-# Development with Supabase
-dotnet run --project src/AscendID_API.WebAPI --launch-profile Development
-
-# Using migration helper script
-./migrate.sh update Local      # Update local database
-./migrate.sh info Development  # Check development database info
 ```
 
-### Setting up PostgreSQL
+The `Local` profile serves on <http://localhost:5120> with Swagger at `/swagger`; the examples below use port 8080 (Docker), so swap the port if you run it this way.
 
-1. **Start PostgreSQL Service**:
-   ```bash
-   # macOS
-   brew services start postgresql
-   
-   # Ubuntu
-   sudo systemctl start postgresql
-   
-   # Windows
-   # Use pgAdmin or start from Services
-   ```
+Environment-specific setup and the migration helper are described in [docs/ENVIRONMENT_SETUP.md](docs/ENVIRONMENT_SETUP.md).
 
-2. **Create Database and User**:
-   ```sql
-   -- Connect to PostgreSQL as superuser
-   psql -U postgres
-   
-   -- Create development database
-   CREATE DATABASE "AscendID_Dev_DB";
-   
-   -- Create production database (optional)
-   CREATE DATABASE "AscendID_DB";
-   
-   -- Create user (if needed)
-   CREATE USER ascendid_user WITH PASSWORD 'your_secure_password';
-   GRANT ALL PRIVILEGES ON DATABASE "AscendID_Dev_DB" TO ascendid_user;
-   ```
+## Configuration
 
-3. **Update Connection String** (if using custom user):
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Host=localhost;Database=AscendID_Dev_DB;Username=ascendid_user;Password=your_secure_password;Port=5432"
-     }
-   }
-   ```
+| Setting | Purpose |
+|---|---|
+| `ConnectionStrings:DefaultConnection` | PostgreSQL connection string |
+| `AdminUser:Email`, `AdminUser:Password` | Admin account seeded on startup |
+| `Jwt:Key` | Signing key, at least 32 characters. The app refuses to issue tokens without it |
+| `Jwt:Issuer`, `Jwt:Audience` | Token issuer and audience |
 
-## Running the Application
+In Docker and CI these are environment variables with `__` as the separator (for example `Jwt__Key`).
 
-1. **Navigate to WebAPI project**:
-   ```bash
-   cd src/AscendID_API.WebAPI
-   ```
+## Endpoints
 
-2. **Run the application**:
-   ```bash
-   dotnet run
-   ```
+### OpenID Connect (`/connect`)
 
-The application will:
-- Connect to PostgreSQL
-- Create the `temp_test_records` table automatically
-- Start the API server (default: http://localhost:5120)
+| Method | Path | Description |
+|---|---|---|
+| GET, POST | `/connect/authorize` | Start the authorization code flow |
+| POST | `/connect/token` | Exchange a code or refresh token for tokens |
+| GET, POST | `/connect/userinfo` | Claims for the access token's subject |
+| GET, POST | `/connect/logout` | End the session |
 
-## Database Schema
+### Account API (`/api/account`)
 
-The application creates the following table structure:
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/account/register` | none | Create an account |
+| POST | `/api/account/login` | none | Get an access and refresh token |
+| POST | `/api/account/refresh-token` | none | Exchange a refresh token |
+| POST | `/api/account/logout` | JWT | Sign out |
+| GET | `/api/account/profile` | JWT | Current user's profile |
+| PUT | `/api/account/profile` | JWT | Update first and last name |
+| POST | `/api/account/change-password` | JWT | Change password |
 
-```sql
-CREATE TABLE public.temp_test_records (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description VARCHAR(500),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP,
-    is_active BOOLEAN DEFAULT true NOT NULL
-);
-
--- Indexes for better performance
-CREATE INDEX ix_temp_test_records_is_active ON temp_test_records(is_active);
-CREATE INDEX ix_temp_test_records_created_at ON temp_test_records(created_at);
-```
-
-## API Endpoints
-
-Access the Swagger documentation at: `http://localhost:5120/swagger`
-
-- `GET /api/TempTestRecords` - Get all records
-- `GET /api/TempTestRecords/{id}` - Get record by ID
-- `POST /api/TempTestRecords` - Create new record
-- `PUT /api/TempTestRecords/{id}` - Update record
-- `DELETE /api/TempTestRecords/{id}` - Soft delete record
-
-## Troubleshooting
-
-### Connection Issues
-
-1. **Check PostgreSQL is running**:
-   ```bash
-   # Check if PostgreSQL is listening
-   pg_isready -h localhost -p 5432
-   ```
-
-2. **Verify connection string**: Make sure the database name, username, and password are correct
-
-3. **Check firewall settings**: Ensure port 5432 is accessible
-
-### Common Errors
-
-- **Database does not exist**: Create the database manually using `CREATE DATABASE`
-- **Permission denied**: Grant proper permissions to the database user
-- **Connection timeout**: Check if PostgreSQL service is running
-
-## Environment Variables (Alternative)
-
-You can also configure the connection string using environment variables:
+Example:
 
 ```bash
-export ConnectionStrings__DefaultConnection="Host=localhost;Database=AscendID_Dev_DB;Username=postgres;Password=postgres;Port=5432"
+curl -X POST http://localhost:8080/api/account/register \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"ada@example.com","password":"Str0ng!Passw0rd","firstName":"Ada","lastName":"Lovelace"}'
+# {"message":"Registration successful"}
+
+curl -X POST http://localhost:8080/api/account/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"ada@example.com","password":"Str0ng!Passw0rd","rememberMe":false}'
+# {"message":"Login successful","accessToken":"eyJ...","refreshToken":"...","expiresAt":"...","tokenType":"Bearer"}
+
+curl http://localhost:8080/api/account/profile -H "Authorization: Bearer <accessToken>"
 ```
 
-Or create a `.env` file in the WebAPI project root:
+Registration auto-confirms the email, which is a demo-only shortcut.
+
+### Demo CRUD (`/api/TempTestRecords`)
+
+A small JWT-protected CRUD resource (`GET`, `GET {id}`, `POST`, `PUT {id}`, `DELETE {id}`) used to exercise the validation and MediatR pipeline. It is a scaffold, not part of the identity features.
+
+## Authorization code flow with PKCE (the SPA client)
+
+Register nothing; `ascend-spa` is seeded. Redirect users to `/connect/authorize` with `client_id=ascend-spa`, `response_type=code`, `redirect_uri=http://localhost:3000/callback`, a `code_challenge` (S256) and the scopes you need. Then `POST /connect/token` with `grant_type=authorization_code`, the `code`, and your `code_verifier`.
+
+The seeded clients, including the confidential client's secret, are **development fixtures**. Change or remove them before deploying anywhere real (see `OpenIddictConfigurationService`).
+
+## Project layout
+
 ```
-ConnectionStrings__DefaultConnection=Host=localhost;Database=AscendID_Dev_DB;Username=postgres;Password=postgres;Port=5432
+src/
+  AscendID_API.Domain/          entities (ApplicationUser, OAuth client and scope)
+  AscendID_API.Application/     MediatR commands, queries, handlers, service interfaces
+  AscendID_API.Infrastructure/  EF Core, OpenIddict setup, JWT and identity services
+  AscendID_API.Shared/          FluentValidation rules shared by the API and the Blazor UI
+  AscendID_API.WebAPI/          controllers, middleware, startup
+  AscendID_API.BlazorUI/        demo UI
+tests/AscendID_API.Tests/       xUnit + Moq
+docs/                           architecture and setup notes
 ```
 
-## Migration Commands (Future Use)
-
-When you need to add database migrations:
-
-```bash
-# Add migration
-dotnet ef migrations add InitialCreate --project src/AscendID_API.Infrastructure --startup-project src/AscendID_API.WebAPI
-
-# Update database
-dotnet ef database update --project src/AscendID_API.Infrastructure --startup-project src/AscendID_API.WebAPI
-```
 ## Tests
 
 ```bash
 dotnet test AscendID_API.sln
 ```
 
-The suite (xUnit + Moq) covers the record entity, FluentValidation rules, MediatR handlers (against an in-memory repository) and `JwtTokenService`: issuing, validating, revoking and refreshing tokens, including a wrong signing key and an inactive user.
+The suite covers the record entity, FluentValidation rules, MediatR handlers (against an in-memory repository) and `JwtTokenService`: issuing, validating, revoking and refreshing tokens, a wrong signing key, an inactive user, and the missing-key failure.
+
+## More documentation
+
+[docs/DOCUMENTATION_INDEX.md](docs/DOCUMENTATION_INDEX.md) links the architecture overview, identity implementation notes, environment setup and the JWT/Swagger guide.
+
+## License
+
+[MIT](LICENSE)

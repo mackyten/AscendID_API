@@ -298,9 +298,9 @@ BlazorUI (depends on Application + Infrastructure + Shared)
 ## Documentation Files
 
 - **[SHARED_VALIDATION_GUIDE.md](SHARED_VALIDATION_GUIDE.md)** - How to use shared validators in WebAPI
-- **[src/AscendID_API.Shared/README.md](src/AscendID_API.Shared/README.md)** - Shared project details
-- **[src/AscendID_API.BlazorUI/README.md](src/AscendID_API.BlazorUI/README.md)** - BlazorUI documentation
-- **[README.md](README.md)** - Original project README
+- **[src/AscendID_API.Shared/README.md](../src/AscendID_API.Shared/README.md)** - Shared project details
+- **[src/AscendID_API.BlazorUI/README.md](../src/AscendID_API.BlazorUI/README.md)** - BlazorUI documentation
+- **[README.md](../README.md)** - Original project README
 
 ## Clean Code Principles Applied
 

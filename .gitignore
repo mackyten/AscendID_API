@@ -366,3 +366,9 @@ appsettings.json
 appsettings.*.json
 # OS files
 .DS_Store
+
+# Local SQLite scratch database
+*.db
+
+# Docker compose secrets
+.env
